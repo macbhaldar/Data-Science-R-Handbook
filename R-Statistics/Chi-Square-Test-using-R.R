@@ -85,3 +85,79 @@ library(ggplot2)
 ggbarstats(data = dat,
            x = size, y = Species) + 
   labs(caption = NULL)
+
+
+
+# Iris Dataset
+
+dat <- iris
+
+dat$size <- ifelse(dat$Sepal.Length < median(dat$Sepal.Length),
+                   "small", "big"
+)
+
+table(dat$Species, dat$size)
+
+library(ggplot2)
+
+ggplot(dat) +
+  aes(x = Species, fill = size) +
+  geom_bar()
+  
+
+ggplot(dat) +
+  aes(x = Species, fill = size) +
+  geom_bar(position = "fill")
+
+ggplot(dat) +
+  aes(x = Species, fill = size) +
+  geom_bar(position = "dodge")
+
+test <- chisq.test(table(dat$Species, dat$size))
+test
+
+test$statistic
+
+test$p.value # p-value
+
+# second method:
+summary(table(dat$Species, dat$size))
+
+# third method:
+library(vcd)
+
+assocstats(table(dat$Species, dat$size))
+
+library(summarytools)
+library(dplyr)
+
+# fourth method:
+dat %$%
+  ctable(Species, size,
+         prop = "r", chisq = TRUE, headings = FALSE
+  ) %>%
+  print(
+    method = "render",
+    style = "rmarkdown",
+    footnote = NA
+  )
+
+library(vcd)
+
+mosaic(~ Species + size,
+       direction = c("v", "h"),
+       data = dat,
+       shade = TRUE
+)
+
+# load packages
+library(ggstatsplot)
+library(ggplot2)
+
+# plot
+ggbarstats(
+  data = dat,
+  x = size,
+  y = Species
+) +
+  labs(caption = NULL)
